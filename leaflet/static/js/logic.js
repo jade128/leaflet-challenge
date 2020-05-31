@@ -7,7 +7,15 @@ d3.json(queryUrl, function(data) {
   createFeatures(data.features);
   console.log(data.feature)
 });
-
+  // scale color bar for magnitude 
+function getColor(d) {
+    return d > 5 ? '#ff3333' :
+           d > 4  ? '#ff6633' :
+           d > 3  ? '#ff9933' :
+           d > 2  ? '#ffcc33' :
+           d > 1  ? '#ffff33' :
+                    '#ccff33';
+  }
 function createFeatures(earthquakeData) {
 
   // Define a function we want to run once for each feature in the features array
@@ -22,28 +30,6 @@ function createFeatures(earthquakeData) {
     return magnitude * 20000;
   }
 
-  //set the circle color based on the magnitude
-  function circleColor(magnitude) {
-    if (magnitude < 1) {
-      return "#ccff33"
-    }
-    else if (magnitude < 2) {
-      return "#ffff33"
-    }
-    else if (magnitude < 3) {
-      return "#ffcc33"
-    }
-    else if (magnitude < 4) {
-      return "#ff9933"
-    }
-    else if (magnitude < 5) {
-      return "#ff6633"
-    }
-    else {
-      return "#ff3333"
-    }
-  }
-
 
   // Create a GeoJSON layer containing the features array on the earthquakeData object
   // Run the onEachFeature function once for each piece of data in the array
@@ -51,7 +37,7 @@ function createFeatures(earthquakeData) {
     pointToLayer: function(earthquakeData, latlng) {
       return L.circle(latlng, {
         radius: radiusSize(earthquakeData.properties.mag),
-        color: circleColor(earthquakeData.properties.mag),
+        color: getColor(earthquakeData.properties.mag),
         fillOpacity: 1
       });
     },
@@ -113,17 +99,6 @@ function createMap(earthquakes) {
   L.control.layers(baseMaps, overlayMaps, {
     collapsed: false
   }).addTo(myMap);
-
-
-  // scale color bar for magnitude 
-  function getColor(d) {
-    return d > 5 ? '#ff3333' :
-           d > 4  ? '#ff6633' :
-           d > 3  ? '#ff9933' :
-           d > 2  ? '#ffcc33' :
-           d > 1  ? '#ffff33' :
-                    '#ccff33';
-  }
 
   // Add legend to the map
   var legend = L.control({position: 'bottomright'});
